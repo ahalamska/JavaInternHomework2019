@@ -1,17 +1,18 @@
 package com.halamska.cognifidetask;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import lombok.Data;
+import org.json.JSONArray;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @Data
 public class BooksManager {
 
     private static BooksManager instance;
 
-    private Map<String, Book> bookMap = new HashMap<String, Book>();
+    private Map<String, Book> bookMap = new HashMap<>();
 
     public static synchronized BooksManager getInstance() {
         if (instance == null) {
@@ -32,9 +33,18 @@ public class BooksManager {
 
     }
 
-    public String parseToJsonTemplate(Book book) {
-        Gson gson = new Gson();
-        return gson.toJson(book);
+
+
+    public List<Book> getBooksByCategory(String category) {
+        List<Book> books = new ArrayList<>();
+        Iterator<Map.Entry<String, Book>> iterator = bookMap.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<String, Book> entry = iterator.next();
+            if (entry.getValue().getCategories()!= null && entry.getValue().getCategories().contains(category)) {
+                books.add(entry.getValue());
+            }
+        }
+        return books;
     }
 
 }

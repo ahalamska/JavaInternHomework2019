@@ -1,8 +1,11 @@
 package com.halamska.cognifidetask;
 
+import com.google.gson.Gson;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.List;
 
 public class JSONBookManager {
 
@@ -68,5 +71,20 @@ public class JSONBookManager {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public String parseToJsonTemplate(Book book) {
+        Gson gson = new Gson();
+        return gson.toJson(book);
+    }
+
+    public String parseToJsonTemplate(List<Book> books) {
+        Gson gson = new Gson();
+        return gson.toJson(books);
+    }
+
+    public String parseToJsonTemplate(JSONArray jsonArray) {
+        Gson gson = new Gson();
+        return gson.toJson(jsonArray);
     }
 }
