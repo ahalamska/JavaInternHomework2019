@@ -12,9 +12,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Data
 @NoArgsConstructor
@@ -99,5 +97,9 @@ public class Book {
         }
     }
 
+    /*public JSONObject parseJSON(){
+
+    }
+*/
 
 }

@@ -1,8 +1,5 @@
 package com.halamska.cognifidetask;
 
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -10,12 +7,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLConnection;
-import java.net.http.HttpResponse;
-import java.util.ArrayList;
-import java.util.List;
 
 
 public class HttpRequestMenager {
