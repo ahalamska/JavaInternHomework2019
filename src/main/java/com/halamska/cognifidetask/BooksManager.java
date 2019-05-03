@@ -4,8 +4,11 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import lombok.Data;
 import org.json.JSONArray;
+import org.json.JSONObject;
 
+import javax.validation.constraints.Null;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Data
 public class BooksManager {
@@ -46,5 +49,60 @@ public class BooksManager {
         }
         return books;
     }
+
+    public List<JSONObject> getAuthorsRating() {
+        Map<String,List<Double>> manyRatingsMap = getAuthorsWithRatingsList();
+        Map<String, Double> singleRatingMAp = avgRating(manyRatingsMap);
+        return sortAuthors(singleRatingMAp);
+    }
+
+    private List<JSONObject> sortAuthors(Map<String, Double> singleRatingMAp) {
+        List<Map.Entry<String, Double>> collect = singleRatingMAp.entrySet()
+                .stream()
+                .sorted(Map.Entry.comparingByValue())
+                .collect(Collectors.toList());
+        List<JSONObject> result = new ArrayList<>();
+        for (Map.Entry<String, Double> author : collect){
+            result.add(JSONBookManager.getInstance().parseToJsonTemplate(author));
+        }
+        return result;
+    }
+
+    private Map<String, Double> avgRating(Map<String, List<Double>> manyRatingsMap) {
+        return manyRatingsMap.entrySet()
+                .stream()
+                .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue()
+                                .stream()
+                                .mapToDouble(Double::doubleValue)
+                                .average().getAsDouble()));
+    }
+
+
+
+
+
+
+    public Map<String,List<Double>> getAuthorsWithRatingsList(){
+        Map<String,List<Double>> authorMap = new HashMap<>();
+        Iterator<Map.Entry<String, Book>> iterator = bookMap.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<String, Book> entry = iterator.next();
+            if(entry.getValue().getAverageRating() != 0){
+                for (String author : entry.getValue().getAuthors()) {
+                    if (authorMap.containsKey(author)) {
+                        authorMap.get(author).add(entry.getValue().getAverageRating());
+                    }
+                    else{
+
+                        List<Double> array = new ArrayList<>();
+                        array.add(entry.getValue().getAverageRating());
+                        authorMap.put(author, array);
+                    }
+                }
+            }
+        }
+        return authorMap;
+    }
+
 
 }

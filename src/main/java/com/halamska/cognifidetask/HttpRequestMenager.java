@@ -37,8 +37,6 @@ public class HttpRequestMenager {
         catch (IOException | JSONException e) {
             e.printStackTrace();
         }
-
-
         return response;
     }
 

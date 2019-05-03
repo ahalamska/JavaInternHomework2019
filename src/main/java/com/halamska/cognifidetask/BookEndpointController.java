@@ -11,26 +11,31 @@ import org.springframework.web.server.ResponseStatusException;
 public class BookEndpointController {
 
     public static final String BOOK_ENDPOINT = "/books";
-    public static final String CATEGORY_ENDPOINT = "?category=";
+    public static final String AUTHORS_ENDPOINT = "/authors-rating";
 
 
     @GetMapping(path = "/{isbn}")
-    public String getBookByIsbn(@PathVariable String isbn){
-        if(BooksManager.getInstance().getBookMap().containsKey(isbn)) {
+    @ResponseBody
+    public String getBookByIsbn(@PathVariable String isbn) {
+        if (BooksManager.getInstance().getBookMap().containsKey(isbn)) {
             Book book = BooksManager.getInstance().getBookMap().get(isbn);
             return JSONBookManager.getInstance().parseToJsonTemplate(book);
-        }
-        else{
-            throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND, "Book not found"
-            );
+        } else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Book not found");
         }
     }
 
 
     @GetMapping()
     @ResponseBody
-    public String getBooksByCategory(@RequestParam String category){
-         return JSONBookManager.getInstance().parseToJsonTemplate(BooksManager.getInstance().getBooksByCategory(category));
+    public String getBooksByCategory(@RequestParam String category) {
+        return JSONBookManager.getInstance().parseToJsonTemplate(BooksManager.getInstance().getBooksByCategory(category));
     }
+
+    @GetMapping(AUTHORS_ENDPOINT)
+    @ResponseBody
+    public String getAuthorRating(){
+        return JSONBookManager.getInstance().parseToJsonTemplate(BooksManager.getInstance().getAuthorsRating());
+    }
+
 }
