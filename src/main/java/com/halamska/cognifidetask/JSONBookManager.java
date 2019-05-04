@@ -81,7 +81,6 @@ public class JSONBookManager {
         return gson.toJson(book);
     }
     public JSONObject parseToJsonTemplate(Map.Entry<String, Double>  entry) {
-        ObjectMapper mapper = new ObjectMapper();
         Map<String, Object> authorMap = new HashMap<>();
         authorMap.put("author", entry.getKey());
         authorMap.put("averageRating", entry.getValue());

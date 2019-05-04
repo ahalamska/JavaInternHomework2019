@@ -1,12 +1,8 @@
 package com.halamska.cognifidetask;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
 import lombok.Data;
-import org.json.JSONArray;
 import org.json.JSONObject;
 
-import javax.validation.constraints.Null;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -26,13 +22,12 @@ public class BooksManager {
 
     public void addBook(Book book) {
         this.bookMap.put(book.getIsbn(), book);
-        System.out.println("Added " + this.bookMap.size());
     }
 
     public void downloadBooks() {
         JSONBookManager.getInstance()
                 .saveEveryBookInBookManager(JSONBookManager.getInstance()
-                        .separateBooks(HttpRequestMenager.downloadBooksData()));
+                        .separateBooks(HttpRequestManager.downloadBooksData()));
 
     }
 
@@ -56,10 +51,10 @@ public class BooksManager {
         return sortAuthors(singleRatingMAp);
     }
 
-    private List<JSONObject> sortAuthors(Map<String, Double> singleRatingMAp) {
+    public List<JSONObject> sortAuthors(Map<String, Double> singleRatingMAp) {
         List<Map.Entry<String, Double>> collect = singleRatingMAp.entrySet()
                 .stream()
-                .sorted(Map.Entry.comparingByValue())
+                .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
                 .collect(Collectors.toList());
         List<JSONObject> result = new ArrayList<>();
         for (Map.Entry<String, Double> author : collect){
@@ -68,7 +63,7 @@ public class BooksManager {
         return result;
     }
 
-    private Map<String, Double> avgRating(Map<String, List<Double>> manyRatingsMap) {
+    public Map<String, Double> avgRating(Map<String, List<Double>> manyRatingsMap) {
         return manyRatingsMap.entrySet()
                 .stream()
                 .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue()
