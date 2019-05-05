@@ -1,11 +1,10 @@
 package com.halamska.cognifidetask;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+
 import com.google.gson.Gson;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -80,13 +79,11 @@ public class JSONBookManager {
         Gson gson = new Gson();
         return gson.toJson(book);
     }
-    public JSONObject parseToJsonTemplate(Map.Entry<String, Double>  entry) {
-        Map<String, Object> authorMap = new HashMap<>();
-        authorMap.put("author", entry.getKey());
-        authorMap.put("averageRating", entry.getValue());
-
-        return new JSONObject(authorMap);
-    }
+/*    public JSONObject parseToJsonTemplate(Map.Entry<String, Double>  entry) throws JSONException {
+        Author author = new Author(entry.getKey(),entry.getValue());
+        Gson gson = new Gson();
+        return new JSONObject(gson.toJson(author));
+    }*/
 
     public String parseToJsonTemplate(List<? extends Object> books) {
         Gson gson = new Gson();

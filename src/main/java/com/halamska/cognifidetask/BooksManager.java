@@ -1,6 +1,7 @@
 package com.halamska.cognifidetask;
 
 import lombok.Data;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.*;
@@ -58,7 +59,11 @@ public class BooksManager {
                 .collect(Collectors.toList());
         List<JSONObject> result = new ArrayList<>();
         for (Map.Entry<String, Double> author : collect){
-            result.add(JSONBookManager.getInstance().parseToJsonTemplate(author));
+            try {
+                result.add(JSONBookManager.getInstance().parseToJsonTemplate(author));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
         return result;
     }
@@ -66,7 +71,7 @@ public class BooksManager {
     public Map<String, Double> avgRating(Map<String, List<Double>> manyRatingsMap) {
         return manyRatingsMap.entrySet()
                 .stream()
-                .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue()
+                .collect(Collectors.toConcurrentMap(Map.Entry::getKey, entry -> entry.getValue()
                                 .stream()
                                 .mapToDouble(Double::doubleValue)
                                 .average().getAsDouble()));
