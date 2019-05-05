@@ -7,6 +7,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -26,7 +27,7 @@ public class BooksManager {
     }
 
 
-    private void saveEveryBookInBookManager(JSONArray books) throws  JSONException {
+    private void saveEveryBookInBookManager(JSONArray books) throws JSONException {
         for (int i = 0; i < books.length(); i++) {
             Book book = new Book(books.getJSONObject(i));
             addBook(book);
@@ -37,8 +38,8 @@ public class BooksManager {
 
     public void downloadBooks() throws JSONException {
 
-        JSONObject response = new JSONObject(restTemplate.getForObject("https://www.googleapis" +
-                ".com/books/v1/volumes?q=java&maxResults=40", String.class));
+        JSONObject response = new JSONObject(restTemplate.getForObject("https://www.googleapis" + ".com/books/v1" +
+                "/volumes?q=java&maxResults=40", String.class));
         saveEveryBookInBookManager(jsonBookManager.separateBooks(response));
 
     }
@@ -54,24 +55,20 @@ public class BooksManager {
         return books;
     }
 
-    List<JSONObject> getAuthorsRating() {
+    List<Author> getAuthorsRating() {
         Map<String, List<Double>> manyRatingsMap = getAuthorsWithRatingsList();
         Map<String, Double> singleRatingMAp = avgRating(manyRatingsMap);
         return sortAuthors(singleRatingMAp);
     }
 
-    private List<JSONObject> sortAuthors(Map<String, Double> singleRatingMAp) {
+    private List<Author> sortAuthors(Map<String, Double> singleRatingMAp) {
         List<Map.Entry<String, Double>> collect = singleRatingMAp.entrySet()
                 .stream()
                 .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
                 .collect(Collectors.toList());
-        List<JSONObject> result = new ArrayList<>();
+        List<Author> result = new ArrayList<>();
         for (Map.Entry<String, Double> author : collect) {
-            try {
-                result.add(jsonBookManager.parseToJsonTemplate(author));
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+            result.add(new Author(author.getKey(), author.getValue()));
         }
         return result;
     }
