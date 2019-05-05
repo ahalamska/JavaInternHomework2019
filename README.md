@@ -26,16 +26,18 @@ I used Singleton as a design pattern on master branch to simulate Managers class
 For code diagnosis I used SonarLint. Only issue I didn't fix is to change printing the exceptions to log it. 
 I didn't provide JavaDoc, because I think that code should be self-explanatory, so I tried to make it easy to read by following the rules of clean code.
 
-Run instructions
-Building
+#  Run instructions
+
 To build the project use following command:
+
 •	mvn clean install
-.................................................
-Running
+
+
 After building the dashboard run following command to start it:
+
 •	java -jar target/ cognifide-task-0.0.1-SNAPSHOT.jar
-.................................................
-Port
+
+
 Application runs of port 8080
 
 
