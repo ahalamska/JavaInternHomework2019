@@ -79,11 +79,11 @@ public class JSONBookManager {
         Gson gson = new Gson();
         return gson.toJson(book);
     }
-/*    public JSONObject parseToJsonTemplate(Map.Entry<String, Double>  entry) throws JSONException {
+    public JSONObject parseToJsonTemplate(Map.Entry<String, Double>  entry) throws JSONException {
         Author author = new Author(entry.getKey(),entry.getValue());
         Gson gson = new Gson();
         return new JSONObject(gson.toJson(author));
-    }*/
+    }
 
     public String parseToJsonTemplate(List<? extends Object> books) {
         Gson gson = new Gson();
