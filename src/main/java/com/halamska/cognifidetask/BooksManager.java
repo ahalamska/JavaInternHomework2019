@@ -1,66 +1,74 @@
 package com.halamska.cognifidetask;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Data
+@Getter
+@Service
+@RequiredArgsConstructor
+
 public class BooksManager {
 
-    private static BooksManager instance;
 
+    private final RestTemplate restTemplate = new RestTemplate();
+    private final JSONBookManager jsonBookManager;
     private Map<String, Book> bookMap = new HashMap<>();
 
-    public static synchronized BooksManager getInstance() {
-        if (instance == null) {
-            instance = new BooksManager();
-        }
-        return instance;
-    }
-
-    public void addBook(Book book) {
+    void addBook(Book book) {
         this.bookMap.put(book.getIsbn(), book);
     }
 
-    public void downloadBooks() {
-        JSONBookManager.getInstance()
-                .saveEveryBookInBookManager(JSONBookManager.getInstance()
-                        .separateBooks(HttpRequestManager.downloadBooksData()));
+
+    private void saveEveryBookInBookManager(JSONArray books) throws  JSONException {
+        for (int i = 0; i < books.length(); i++) {
+            Book book = new Book(books.getJSONObject(i));
+            addBook(book);
+
+        }
+
+    }
+
+    public void downloadBooks() throws JSONException {
+
+        JSONObject response = new JSONObject(restTemplate.getForObject("https://www.googleapis" +
+                ".com/books/v1/volumes?q=java&maxResults=40", String.class));
+        saveEveryBookInBookManager(jsonBookManager.separateBooks(response));
 
     }
 
 
-
-    public List<Book> getBooksByCategory(String category) {
+    List<Book> getBooksByCategory(String category) {
         List<Book> books = new ArrayList<>();
-        Iterator<Map.Entry<String, Book>> iterator = bookMap.entrySet().iterator();
-        while (iterator.hasNext()) {
-            Map.Entry<String, Book> entry = iterator.next();
-            if (entry.getValue().getCategories()!= null && entry.getValue().getCategories().contains(category)) {
+        for (Map.Entry<String, Book> entry : bookMap.entrySet()) {
+            if (entry.getValue().getCategories() != null && entry.getValue().getCategories().contains(category)) {
                 books.add(entry.getValue());
             }
         }
         return books;
     }
 
-    public List<JSONObject> getAuthorsRating() {
-        Map<String,List<Double>> manyRatingsMap = getAuthorsWithRatingsList();
+    List<JSONObject> getAuthorsRating() {
+        Map<String, List<Double>> manyRatingsMap = getAuthorsWithRatingsList();
         Map<String, Double> singleRatingMAp = avgRating(manyRatingsMap);
         return sortAuthors(singleRatingMAp);
     }
 
-    public List<JSONObject> sortAuthors(Map<String, Double> singleRatingMAp) {
+    private List<JSONObject> sortAuthors(Map<String, Double> singleRatingMAp) {
         List<Map.Entry<String, Double>> collect = singleRatingMAp.entrySet()
                 .stream()
                 .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
                 .collect(Collectors.toList());
         List<JSONObject> result = new ArrayList<>();
-        for (Map.Entry<String, Double> author : collect){
+        for (Map.Entry<String, Double> author : collect) {
             try {
-                result.add(JSONBookManager.getInstance().parseToJsonTemplate(author));
+                result.add(jsonBookManager.parseToJsonTemplate(author));
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -68,31 +76,25 @@ public class BooksManager {
         return result;
     }
 
-    public Map<String, Double> avgRating(Map<String, List<Double>> manyRatingsMap) {
+    Map<String, Double> avgRating(Map<String, List<Double>> manyRatingsMap) {
         return manyRatingsMap.entrySet()
                 .stream()
                 .collect(Collectors.toConcurrentMap(Map.Entry::getKey, entry -> entry.getValue()
-                                .stream()
-                                .mapToDouble(Double::doubleValue)
-                                .average().getAsDouble()));
+                        .stream()
+                        .mapToDouble(Double::doubleValue)
+                        .average()
+                        .getAsDouble()));
     }
 
 
-
-
-
-
-    public Map<String,List<Double>> getAuthorsWithRatingsList(){
-        Map<String,List<Double>> authorMap = new HashMap<>();
-        Iterator<Map.Entry<String, Book>> iterator = bookMap.entrySet().iterator();
-        while (iterator.hasNext()) {
-            Map.Entry<String, Book> entry = iterator.next();
-            if(entry.getValue().getAverageRating() != 0){
+    Map<String, List<Double>> getAuthorsWithRatingsList() {
+        Map<String, List<Double>> authorMap = new HashMap<>();
+        for (Map.Entry<String, Book> entry : bookMap.entrySet()) {
+            if (entry.getValue().getAverageRating() != 0 && entry.getValue().getAuthors() != null) {
                 for (String author : entry.getValue().getAuthors()) {
                     if (authorMap.containsKey(author)) {
                         authorMap.get(author).add(entry.getValue().getAverageRating());
-                    }
-                    else{
+                    } else {
 
                         List<Double> array = new ArrayList<>();
                         array.add(entry.getValue().getAverageRating());

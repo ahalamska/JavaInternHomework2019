@@ -1,8 +1,6 @@
 package com.halamska.cognifidetask;
 
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.*;
 import org.json.JSONException;
@@ -16,7 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 @ToString
 @Builder
-public class Book {
+class Book {
 
     private String isbn;
 
@@ -36,68 +34,75 @@ public class Book {
 
     private String language;
 
-    private  String previewLink;
+    private String previewLink;
 
-    private  double averageRating;
+    private double averageRating;
 
     private List<String> authors;
 
     private List<String> categories;
 
-    public Book(JSONObject jsonBook) {
 
-        this.isbn  =  JSONBookManager.getIsbn(jsonBook);
+    Book(JSONObject jsonBook) {
 
         try {
+            this.isbn = JSONBookManager.getIsbn(jsonBook);
+
             JSONObject volumeInfo = jsonBook.getJSONObject("volumeInfo");
 
             this.title = volumeInfo.getString("title");
 
-            if(volumeInfo.has("subtitle")) {
+            if (volumeInfo.has("subtitle")) {
                 this.subtitle = volumeInfo.getString("subtitle");
             }
 
-            this.publisher = volumeInfo.getString("publisher");
+            if (volumeInfo.has("publisher")) {
+                this.publisher = volumeInfo.getString("publisher");
+            }
 
-            this.publishedDate = volumeInfo.getString("publishedDate");
+            if (volumeInfo.has("publishedDate")) {
+                this.publishedDate = volumeInfo.getString("publishedDate");
+            }
 
-            this.description = volumeInfo.getString("description");
+            if (volumeInfo.has("description")) {
+                this.description = volumeInfo.getString("description");
+            }
 
-            this.pageCount = volumeInfo.getInt("pageCount");
+            if (volumeInfo.has("pageCount")) {
+                this.pageCount = volumeInfo.getInt("pageCount");
+            }
 
-            this.thumbnailUrl = volumeInfo.getJSONObject("imageLinks").getString("thumbnail");
+            if (volumeInfo.has("imageLinks")) {
+                this.thumbnailUrl = volumeInfo.getJSONObject("imageLinks").getString("thumbnail");
+            }
 
-            this.language = volumeInfo.getString("language");
+            if (volumeInfo.has("language")) {
+                this.language = volumeInfo.getString("language");
+            }
 
-            this.previewLink = volumeInfo.getString("previewLink");
+            if (volumeInfo.has("previewLink")) {
+                this.previewLink = volumeInfo.getString("previewLink");
+            }
 
-            if(volumeInfo.has("averageRating")) {
+            if (volumeInfo.has("averageRating")) {
                 this.averageRating = volumeInfo.getDouble("averageRating");
             }
 
 
             ObjectMapper mapper = new ObjectMapper();
 
-            this.authors = mapper.readValue(volumeInfo.getString("authors"), List.class);
+            if (volumeInfo.has("authors")) {
+                this.authors = mapper.readValue(volumeInfo.getString("authors"), List.class);
+            }
 
-            this.categories = mapper.readValue(volumeInfo.getString("categories"), List.class);
+            if (volumeInfo.has("categories")) {
+                this.categories = mapper.readValue(volumeInfo.getString("categories"), List.class);
+            }
 
 
-
-        } catch (JSONException e) {
-
-        } catch (JsonParseException e) {
-            e.printStackTrace();
-        } catch (JsonMappingException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
+        } catch (IOException | JSONException e) {
             e.printStackTrace();
         }
     }
-
-    /*public JSONObject parseJSON(){
-
-    }
-*/
 
 }

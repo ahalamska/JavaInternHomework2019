@@ -1,21 +1,32 @@
 package com.halamska.cognifidetask;
 
+import lombok.RequiredArgsConstructor;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+
 public class BooksManagerTest {
 
 
-    Book book1 = new Book();
+    private Book book1 = new Book();
+    private Book book2 = new Book();
 
 
-    Book book2 = new Book();
+
+    private BooksManager booksManager = new BooksManager(new JSONBookManager());
 
     @Before
     public void setUp(){
@@ -27,8 +38,8 @@ public class BooksManagerTest {
         book2.setIsbn("2");
         book2.setAuthors(authors);
         book2.setAverageRating(2.0);
-        BooksManager.getInstance().addBook(book1);
-        BooksManager.getInstance().addBook(book2);
+        booksManager.addBook(book1);
+        booksManager.addBook(book2);
     }
 
 
@@ -40,10 +51,10 @@ public class BooksManagerTest {
         categories.add(category);
         book.setIsbn("1");
         book.setCategories(categories);
-        BooksManager.getInstance().addBook(book);
+        booksManager.addBook(book);
         List<Book> books = new ArrayList<>();
         books.add(book);
-        Assert.assertEquals(books, BooksManager.getInstance().getBooksByCategory(category));
+        Assert.assertEquals(books, booksManager.getBooksByCategory(category));
 
     }
 
@@ -58,7 +69,7 @@ public class BooksManagerTest {
         ratingList.add(2.0);
 
         manyRatingsMap.put("author1", ratingList);
-        Assert.assertEquals("3.0", BooksManager.getInstance().avgRating(manyRatingsMap).get("author1").toString());
+        Assert.assertEquals("3.0", booksManager.avgRating(manyRatingsMap).get("author1").toString());
     }
 
     @Test
@@ -68,6 +79,6 @@ public class BooksManagerTest {
         ratingList.add(3.0);
         ratingList.add(2.0);
         authorMap.put("author1", ratingList);
-        Assert.assertEquals(authorMap, BooksManager.getInstance().getAuthorsWithRatingsList());
+        Assert.assertEquals(authorMap, booksManager.getAuthorsWithRatingsList());
     }
 }

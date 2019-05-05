@@ -2,55 +2,26 @@ package com.halamska.cognifidetask;
 
 
 import com.google.gson.Gson;
+import lombok.RequiredArgsConstructor;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import java.util.HashMap;
+import org.springframework.stereotype.Component;
+
 import java.util.List;
 import java.util.Map;
 
+@Component
+@RequiredArgsConstructor
 public class JSONBookManager {
 
-    public static JSONBookManager instance;
 
+    static String getIsbn(JSONObject book) throws JSONException {
 
-
-    public static synchronized JSONBookManager getInstance() {
-        if (instance == null){
-            instance = new JSONBookManager();
-        }
-        return instance;
-    }
-
-    public JSONArray separateBooks(JSONObject response){
-        JSONArray jsonJSONArray = new JSONArray();
-        try {
-            jsonJSONArray = response.getJSONArray("items");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return jsonJSONArray;
-    }
-
-    public void saveEveryBookInBookManager(JSONArray books){
-        for(int i = 0; i < books.length(); i++){
-
-            try {
-                Book book = new Book(books.getJSONObject(i));
-                BooksManager.getInstance().addBook(book);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-
-    }
-
-    public static String getIsbn(JSONObject book){
-        try {
             JSONArray industryIdentifiers = book.getJSONObject("volumeInfo").getJSONArray("industryIdentifiers");
-            if(industryIdentifiers != null){
-                for(int i = 0; i < industryIdentifiers.length(); i++){
-                    if(industryIdentifiers.getJSONObject(i).get("type") != null && industryIdentifiers.getJSONObject(i)
+            if (industryIdentifiers != null) {
+                for (int i = 0; i < industryIdentifiers.length(); i++) {
+                    if (industryIdentifiers.getJSONObject(i).get("type") != null && industryIdentifiers.getJSONObject(i)
                             .getString("type")
                             .equals("ISBN_13")) {
                         return industryIdentifiers.getJSONObject(i).getString("identifier");
@@ -59,39 +30,34 @@ public class JSONBookManager {
                 return getIsbnFromId(book);
             }
             return getIsbnFromId(book);
-        }
-        catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return null;
     }
 
-    private static String getIsbnFromId(JSONObject book) {
-        try {
-            return book.getString("id");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return null;
+    private static String getIsbnFromId(JSONObject book) throws JSONException {
+        return book.getString("id");
     }
 
-    public String parseToJsonTemplate(Book book) {
+    JSONArray separateBooks(JSONObject response) throws JSONException {
+        JSONArray jsonJSONArray;
+
+            jsonJSONArray = response.getJSONArray("items");
+
+        return jsonJSONArray;
+    }
+
+
+    String parseToJsonTemplate(Book book) {
         Gson gson = new Gson();
         return gson.toJson(book);
     }
-/*    public JSONObject parseToJsonTemplate(Map.Entry<String, Double>  entry) throws JSONException {
-        Author author = new Author(entry.getKey(),entry.getValue());
+
+    JSONObject parseToJsonTemplate(Map.Entry<String, Double> entry) throws JSONException {
+        Author author = new Author(entry.getKey(), entry.getValue());
         Gson gson = new Gson();
         return new JSONObject(gson.toJson(author));
-    }*/
-
-    public String parseToJsonTemplate(List<? extends Object> books) {
-        Gson gson = new Gson();
-        return gson.toJson(books);
     }
 
-    public String parseToJsonTemplate(JSONArray jsonArray) {
+    String parseToJsonTemplate(List<?> books) {
         Gson gson = new Gson();
-        return gson.toJson(jsonArray);
+        return gson.toJson(books);
     }
 }

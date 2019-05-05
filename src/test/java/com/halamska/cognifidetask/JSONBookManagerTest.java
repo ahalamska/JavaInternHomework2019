@@ -8,6 +8,7 @@ import org.junit.Test;
 
 
 public class JSONBookManagerTest {
+
     private JSONBookManager subject = new JSONBookManager();
 
     @Test
