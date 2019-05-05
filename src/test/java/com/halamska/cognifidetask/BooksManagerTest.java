@@ -1,16 +1,8 @@
 package com.halamska.cognifidetask;
 
-import lombok.RequiredArgsConstructor;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,11 +17,10 @@ public class BooksManagerTest {
     private Book book2 = new Book();
 
 
-
     private BooksManager booksManager = new BooksManager(new JSONBookManager());
 
     @Before
-    public void setUp(){
+    public void setUp() {
         List<String> authors = new ArrayList<>();
         authors.add("author1");
         book1.setIsbn("1");
@@ -74,7 +65,7 @@ public class BooksManagerTest {
 
     @Test
     public void shouldGetAuthorsWithRatingsList() {
-        Map<String,List<Double>> authorMap = new HashMap<>();
+        Map<String, List<Double>> authorMap = new HashMap<>();
         List<Double> ratingList = new ArrayList<>();
         ratingList.add(3.0);
         ratingList.add(2.0);
