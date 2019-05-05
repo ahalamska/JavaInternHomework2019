@@ -1,4 +1,4 @@
-/*
+
 package com.halamska.cognifidetask;
 
 
@@ -39,4 +39,4 @@ public class BookEndpointController {
         return jsonBookManager.parseToJsonTemplate(BooksManager.getInstance().getAuthorsRating());
     }
 
-}*/
+}
