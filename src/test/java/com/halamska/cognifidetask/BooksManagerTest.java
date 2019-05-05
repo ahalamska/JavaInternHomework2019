@@ -9,16 +9,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+
 public class BooksManagerTest {
 
 
-    Book book1 = new Book();
+    private Book book1 = new Book();
+    private Book book2 = new Book();
 
 
-    Book book2 = new Book();
+    private BooksManager booksManager = new BooksManager(new JSONBookManager());
 
     @Before
-    public void setUp(){
+    public void setUp() {
         List<String> authors = new ArrayList<>();
         authors.add("author1");
         book1.setIsbn("1");
@@ -27,8 +29,8 @@ public class BooksManagerTest {
         book2.setIsbn("2");
         book2.setAuthors(authors);
         book2.setAverageRating(2.0);
-        BooksManager.getInstance().addBook(book1);
-        BooksManager.getInstance().addBook(book2);
+        booksManager.addBook(book1);
+        booksManager.addBook(book2);
     }
 
 
@@ -40,10 +42,10 @@ public class BooksManagerTest {
         categories.add(category);
         book.setIsbn("1");
         book.setCategories(categories);
-        BooksManager.getInstance().addBook(book);
+        booksManager.addBook(book);
         List<Book> books = new ArrayList<>();
         books.add(book);
-        Assert.assertEquals(books, BooksManager.getInstance().getBooksByCategory(category));
+        Assert.assertEquals(books, booksManager.getBooksByCategory(category));
 
     }
 
@@ -58,16 +60,16 @@ public class BooksManagerTest {
         ratingList.add(2.0);
 
         manyRatingsMap.put("author1", ratingList);
-        Assert.assertEquals("3.0", BooksManager.getInstance().avgRating(manyRatingsMap).get("author1").toString());
+        Assert.assertEquals("3.0", booksManager.avgRating(manyRatingsMap).get("author1").toString());
     }
 
     @Test
     public void shouldGetAuthorsWithRatingsList() {
-        Map<String,List<Double>> authorMap = new HashMap<>();
+        Map<String, List<Double>> authorMap = new HashMap<>();
         List<Double> ratingList = new ArrayList<>();
         ratingList.add(3.0);
         ratingList.add(2.0);
         authorMap.put("author1", ratingList);
-        Assert.assertEquals(authorMap, BooksManager.getInstance().getAuthorsWithRatingsList());
+        Assert.assertEquals(authorMap, booksManager.getAuthorsWithRatingsList());
     }
 }
